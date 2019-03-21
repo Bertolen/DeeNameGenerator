@@ -1,0 +1,4 @@
+abaca	abaca	Nom:Mas+SG
+abacule	abacule	Nom:Mas+SG
+abaissable	abaissable	Adj:InvGen+SG
+abaisseurs      abaisseur       Adj:Mas+PL
