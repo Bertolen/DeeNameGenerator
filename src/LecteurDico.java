@@ -5,14 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
 public class LecteurDico {
 
-	private ArrayList<String> Noms;
-	private ArrayList<String> Adjectifs;
-	private ArrayList<String> Verbes;
+	//private ArrayList<String> Noms;
+	//private ArrayList<String> Adjectifs;
+	//private ArrayList<String> Verbes;
+	private Hashtable<String, ArrayList<String>> dictionnaire;
 	private Random r;
 	
 	private boolean debug = false;
@@ -31,9 +33,10 @@ public class LecteurDico {
 		}
 
 		// init des proprétés de la classe
-		Noms = new ArrayList<>();
-		Adjectifs = new ArrayList<>();
-		Verbes = new ArrayList<>();
+		//Noms = new ArrayList<>();
+		//Adjectifs = new ArrayList<>();
+		//Verbes = new ArrayList<>();
+		dictionnaire = new Hashtable<>();
 		r = new Random();
 
 		// ouverture du fichier en lecture
@@ -84,21 +87,19 @@ public class LecteurDico {
 			System.out.println("type : " + type);
 		}
 		
+		ArrayList<String> liste = dictionnaire.get(type);
+		
+		// si le dictionnaire ne connais pas ce type de mot alors on l'ajoute
+		if(liste == null){
+			liste = new ArrayList<>();
+			dictionnaire.put(type, liste);
+			if (debug) {
+				System.out.println("Nouveau type de mot : " + type);
+			}
+		}
+		
 		switch(type) {
-		case "Adj":
-			ajoutUnique(Adjectifs, racine);
-			if(debug){
-				System.out.println("Nouvel adjectif : " + racine);
-			}
-			break;
-
-		case "Nom":
-			ajoutUnique(Noms, racine);
-			if(debug){
-				System.out.println("Nouveau nom : " + racine);
-			}
-			break;
-
+		
 		case "Ver":
 			// si c'est un verbe on cherche à savoir si c'est la conjugaison de l'impératif présent
 			boolean imperatifPresent = false;
@@ -110,19 +111,20 @@ public class LecteurDico {
 			
 			// si c'est en effet l'impératif présent alors on l'ajoute à la liste
 			if(imperatifPresent){
-				ajoutUnique(Verbes, mot);
+				ajoutUnique(liste, mot);
 				
 				if(debug){
-					System.out.println("Nouveau verbe : " + mot);
+					System.out.println("Nouveau verbe : " + mot + ".");
 				}
 			} else if (debug) {
-				System.out.println("Conjugaison '" + mot + "' du verbe '" + racine + "' ignorée car ce n'est pas l'impératif présent");
+				System.out.println("Conjugaison '" + mot + "' du verbe '" + racine + "' ignorée car ce n'est pas l'impératif présent.");
 			}
 			break;
 			
 		default:
+			ajoutUnique(liste, racine);
 			if(debug){
-				System.out.println("Mot " + racine + " ignoré, car de type " + type + ".");
+				System.out.println("Nouveau mot de type " + type + " : " + racine);
 			}
 			break;
 		} 
@@ -130,28 +132,56 @@ public class LecteurDico {
 	
 	// restitue un nom aléatoire
 	public String nomAleatoire() {
-		return Noms.get( r.nextInt( Noms.size()));
+		ArrayList<String> liste = dictionnaire.get("Nom");
+		
+		if (liste == null) {
+			return null;
+		}
+		
+		return liste.get( r.nextInt( liste.size()));
 	}
 	
 	// restitue un adjectif aléatoire
 	public String adjectifAleatoire() {
-		return Adjectifs.get( r.nextInt( Adjectifs.size()));
+		ArrayList<String> liste = dictionnaire.get("Adv");
+		
+		if (liste == null) {
+			return null;
+		}
+		
+		return liste.get( r.nextInt( liste.size()));
 	}
 	
 	// restitue un verbe aléatoire
 	public String verbeAleatoire() {
-		return Verbes.get( r.nextInt( Verbes.size()));
+		ArrayList<String> liste = dictionnaire.get("Ver");
+		
+		if (liste == null) {
+			return null;
+		}
+		
+		return liste.get( r.nextInt( liste.size()));
+	}
+	
+	// restitue un mot aléatoire du type donné
+	public String motAleatoire(String type) {
+		ArrayList<String> liste = dictionnaire.get(type);
+		
+		if (liste == null) {
+			return null;
+		}
+		
+		return liste.get( r.nextInt( liste.size()));
 	}
 	
 	public String combinaisonAleatoire(){
 		String text = "";
 		
 		if(r.nextBoolean()){
-			text = text.concat(nomAleatoire() + " " + adjectifAleatoire());
+			text = text.concat(motAleatoire("Nom") + " " + motAleatoire("Adj"));
 		} else {
-			text = text.concat(verbeAleatoire() + " " + nomAleatoire());
+			text = text.concat(motAleatoire("Ver") + " " + motAleatoire("Nom"));
 		}
-		
 		
 		return text;
 	}
@@ -174,18 +204,5 @@ public class LecteurDico {
 		if(!liste.contains(mot)){
 			liste.add(mot);
 		}
-	}
-	
-	// Getters
-	public List<String> noms(){
-		return Noms;
-	}
-	
-	public List<String> adjectifs() {
-		return Adjectifs;
-	}
-	
-	public List<String> verbes() {
-		return Verbes;
 	}
 }

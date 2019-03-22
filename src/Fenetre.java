@@ -50,7 +50,7 @@ public class Fenetre extends JFrame
 	
 	private void initFenetre() {
 		//Définit un titre pour notre fenêtre
-	    this.setTitle("Générateur aléatoire de surtextes de LG");
+	    this.setTitle("Générateur de surnoms de LG");
 	    //Définit sa taille : 300 pixels de large et 300 pixels de haut
 	    this.setSize(300, 300);
 	    //Indique que la fenêtre ne peut pas être redimenssionnée
@@ -62,17 +62,19 @@ public class Fenetre extends JFrame
 	    
 	    // init des composants affichés à l'écran
 	    noms = new JLabel[nbNoms];
-	    bouton = new JButton("Generate");
+	    bouton = new JButton("Chargement en cours");
+	    bouton.setEnabled(false); // le bouton est désactivé au début
+	    
+	    // init des panneaux de la fenêtre
 	    namesPanel = new JPanel();
 	    namesPanel.setLayout(new BoxLayout(namesPanel, BoxLayout.PAGE_AXIS));
 	    scrollPanel = new JScrollPane(namesPanel);
 
 	    // ajoute les noms au panneau
 	    for(int i = 0 ; i < nbNoms ; i++){
-	    	noms[i] = new JLabel(" ");
+	    	noms[i] = new JLabel();
 	    	namesPanel.add(noms[i]);
 	    }
-	    noms[nbNoms/2].setText("Chargement en cours");
 	    
 	    // branchage du click du bouton
 	    bouton.addActionListener(this);
@@ -96,8 +98,13 @@ public class Fenetre extends JFrame
 		
 		// on utilise le menu pour demander à l'utilisateur de selectionner un dico
 		if(chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			
+			// chargement du dictionnaire
 			LD = new LecteurDico(chooser.getSelectedFile().toString());
-			noms[nbNoms/2].setText("Prêt!");
+			
+			// une fois le dictionnaire chargé on active le bouton
+			bouton.setText("Générer");
+			bouton.setEnabled(true);
 		}
 	}
 
@@ -112,7 +119,7 @@ public class Fenetre extends JFrame
 			String text = LD.combinaisonAleatoire();
 			
 			if(debug) {
-				System.out.println("noms généré : " + text);
+				System.out.println(" généré : " + text);
 			}
 		
 			//insertion du nouveau nom dans le panneau
