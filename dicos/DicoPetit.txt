@@ -2,3 +2,5 @@ abaca	abaca	Nom:Mas+SG
 abacule	abacule	Nom:Mas+SG
 abaissable	abaissable	Adj:InvGen+SG
 abaisseurs      abaisseur       Adj:Mas+PL
+abaisse	abaisser	Ver:IPre+SG+P1:IPre+SG+P3:SPre+SG+P1:SPre+SG+P3:ImPre+SG+P2
+abaissas	abaisser	Ver:IPSim+SG+P2

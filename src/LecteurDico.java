@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class LecteurDico {
 
 	private ArrayList<String> Noms;
 	private ArrayList<String> Adjectifs;
+	private ArrayList<String> Verbes;
+	private Random r;
 	
 	private boolean debug = false;
 	
@@ -26,13 +29,16 @@ public class LecteurDico {
 		if (fileName == null || fileName.equals("")) {
 			fileName = "DicoFR.txt";
 		}
-		
-		// initialisation de variables
-		File file = new File(fileName);
+
+		// init des proprétés de la classe
 		Noms = new ArrayList<>();
 		Adjectifs = new ArrayList<>();
-		
+		Verbes = new ArrayList<>();
+		r = new Random();
+
 		// ouverture du fichier en lecture
+		File file = new File(fileName);
+		
 		try(
 				// Lecture du dictionnare 
 				FileInputStream fis = new FileInputStream(file);
@@ -53,12 +59,9 @@ public class LecteurDico {
 			}
 			
 		} catch (FileNotFoundException e) {
-			
-			// TODO Affichier un message pour indiquer que le fichier n'a pas été trouvé
 			e.printStackTrace();
 			
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 			
 		}
@@ -83,39 +86,90 @@ public class LecteurDico {
 		
 		switch(type) {
 		case "Adj":
-			ajoutUnique(Adjectifs, mot);
+			ajoutUnique(Adjectifs, racine);
 			if(debug){
-				System.out.println("Nouvel adjectif : " + mot);
+				System.out.println("Nouvel adjectif : " + racine);
 			}
 			break;
 
 		case "Nom":
-			ajoutUnique(Noms, mot);
+			ajoutUnique(Noms, racine);
 			if(debug){
-				System.out.println("Nouveau nom : " + mot);
+				System.out.println("Nouveau nom : " + racine);
+			}
+			break;
+
+		case "Ver":
+			// si c'est un verbe on cherche à savoir si c'est la conjugaison de l'impératif présent
+			boolean imperatifPresent = false;
+			for(String conjugaison : elements){
+				if(conjugaison.equals("ImPre+SG+P2")){
+					imperatifPresent = true;
+				}
+			}
+			
+			// si c'est en effet l'impératif présent alors on l'ajoute à la liste
+			if(imperatifPresent){
+				ajoutUnique(Verbes, mot);
+				
+				if(debug){
+					System.out.println("Nouveau verbe : " + mot);
+				}
+			} else if (debug) {
+				System.out.println("Conjugaison '" + mot + "' du verbe '" + racine + "' ignorée car ce n'est pas l'impératif présent");
 			}
 			break;
 			
 		default:
 			if(debug){
-				System.out.println("Mot " + mot + " ignoré, car de type " + type + ".");
+				System.out.println("Mot " + racine + " ignoré, car de type " + type + ".");
 			}
 			break;
-		}
+		} 
 	}
 	
+	// restitue un nom aléatoire
+	public String nomAleatoire() {
+		return Noms.get( r.nextInt( Noms.size()));
+	}
+	
+	// restitue un adjectif aléatoire
+	public String adjectifAleatoire() {
+		return Adjectifs.get( r.nextInt( Adjectifs.size()));
+	}
+	
+	// restitue un verbe aléatoire
+	public String verbeAleatoire() {
+		return Verbes.get( r.nextInt( Verbes.size()));
+	}
+	
+	public String combinaisonAleatoire(){
+		String text = "";
+		
+		if(r.nextBoolean()){
+			text = text.concat(nomAleatoire() + " " + adjectifAleatoire());
+		} else {
+			text = text.concat(verbeAleatoire() + " " + nomAleatoire());
+		}
+		
+		
+		return text;
+	}
+	
+	// retire tous les double espaces d'une chaîne de caractères
 	public String suppresSpace(String string) {
-		String oldString = new String(string);
-		String newString = new String(string.replace("  ", " "));
+		String oldString = string;
+		String newString = string.replace("  ", " ");
 		
 		while(!newString.equals(oldString)) {
-			oldString = new String(newString);
+			oldString = newString;
 			newString = newString.replace("  ", " ");
 		}
 		
 		return newString;
 	}
 	
+	// on ajoute un element à une liste en s'assurant que c'est la seule occurrence de cet element
 	public void ajoutUnique (List<String> liste, String mot) {
 		if(!liste.contains(mot)){
 			liste.add(mot);
@@ -129,5 +183,9 @@ public class LecteurDico {
 	
 	public List<String> adjectifs() {
 		return Adjectifs;
+	}
+	
+	public List<String> verbes() {
+		return Verbes;
 	}
 }
