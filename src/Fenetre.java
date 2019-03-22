@@ -50,7 +50,7 @@ public class Fenetre extends JFrame
 	
 	private void initFenetre() {
 		//Définit un titre pour notre fenêtre
-	    this.setTitle("Générateur de surnoms de LG");
+	    this.setTitle("Générateur de surnoms");
 	    //Définit sa taille : 300 pixels de large et 300 pixels de haut
 	    this.setSize(300, 300);
 	    //Indique que la fenêtre ne peut pas être redimenssionnée
@@ -119,7 +119,7 @@ public class Fenetre extends JFrame
 			String text = LD.combinaisonAleatoire();
 			
 			if(debug) {
-				System.out.println(" généré : " + text);
+				System.out.println("Surnom généré : " + text);
 			}
 		
 			//insertion du nouveau nom dans le panneau

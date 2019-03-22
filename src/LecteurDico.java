@@ -5,16 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 public class LecteurDico {
 
-	//private ArrayList<String> Noms;
-	//private ArrayList<String> Adjectifs;
-	//private ArrayList<String> Verbes;
-	private Hashtable<String, ArrayList<String>> dictionnaire;
+	private HashMap<String, ArrayList<String>> dictionnaire;
 	private Random r;
 	
 	private boolean debug = false;
@@ -33,21 +30,18 @@ public class LecteurDico {
 		}
 
 		// init des proprétés de la classe
-		//Noms = new ArrayList<>();
-		//Adjectifs = new ArrayList<>();
-		//Verbes = new ArrayList<>();
-		dictionnaire = new Hashtable<>();
+		dictionnaire = new HashMap<>();
 		r = new Random();
 
 		// ouverture du fichier en lecture
 		File file = new File(fileName);
 		
 		try(
-				// Lecture du dictionnare 
-				FileInputStream fis = new FileInputStream(file);
-				
-				// utilisation d'un BufferedReader pour amélioration des performances 
-				BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+			// Lecture du dictionnare 
+			FileInputStream fis = new FileInputStream(file);
+			
+			// utilisation d'un BufferedReader pour amélioration des performances 
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
 			) {
 			
 			// lecture de chaque ligne
@@ -128,39 +122,6 @@ public class LecteurDico {
 			}
 			break;
 		} 
-	}
-	
-	// restitue un nom aléatoire
-	public String nomAleatoire() {
-		ArrayList<String> liste = dictionnaire.get("Nom");
-		
-		if (liste == null) {
-			return null;
-		}
-		
-		return liste.get( r.nextInt( liste.size()));
-	}
-	
-	// restitue un adjectif aléatoire
-	public String adjectifAleatoire() {
-		ArrayList<String> liste = dictionnaire.get("Adv");
-		
-		if (liste == null) {
-			return null;
-		}
-		
-		return liste.get( r.nextInt( liste.size()));
-	}
-	
-	// restitue un verbe aléatoire
-	public String verbeAleatoire() {
-		ArrayList<String> liste = dictionnaire.get("Ver");
-		
-		if (liste == null) {
-			return null;
-		}
-		
-		return liste.get( r.nextInt( liste.size()));
 	}
 	
 	// restitue un mot aléatoire du type donné
